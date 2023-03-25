@@ -1,7 +1,15 @@
 # Library
+
 Library project for the odin project
-Progress:
-- finished implementing basic structure of the library
-    and add "new book" button
-- styling has not be done yet. 
-- error handling has also not done yet (not part of project criteria).
+Progress (finished)
+All features implemented, which includes:
+- Book object implemented.
+- Books can be added to the library.
+- Books can be displayed.
+- New books can be added (new book button along with submit button).
+- Existing book can be deleted from the table.
+- Read status can be toggled by clicking on it.
+
+Technology used
+- Javascript
+- html, css, along with bootstrap framework.

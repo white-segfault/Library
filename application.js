@@ -11,6 +11,7 @@ function Book(title, author, pages, read) {
   this.author = author;
   this.pages = pages;
   this.read = read;
+  this.displayed = false;
 
   this.info = () => {
     const readStatus = this.read ? "have read" : "not read yet";
@@ -35,42 +36,89 @@ function initDisplay() {
   const body = document.querySelector("body");
 
   const table = document.createElement("table");
+  table.setAttribute("class", "table table-striped");
   body.appendChild(table);
 
   const caption = document.createElement("caption");
+
   caption.textContent = "My library";
   table.appendChild(caption);
 
+  const headerTitle = document.createElement("thead");
+  headerTitle.setAttribute("class", "thead-light");
+  table.append(headerTitle)
+
   const headerRow = document.createElement("tr");
-  table.appendChild(headerRow);
+  headerTitle.appendChild(headerRow);
 
   const title = document.createElement("th");
-  title.textContent = "title";
+  title.setAttribute("scope", "col");
+  title.textContent = "Title";
   headerRow.appendChild(title);
 
   const author = document.createElement("th");
-  author.textContent = "author";
+  author.setAttribute("scope", "col");
+  author.textContent = "Author";
   headerRow.appendChild(author);
 
   const pages = document.createElement("th");
-  pages.textContent = "pages";
+  pages.setAttribute("scope", "col");
+  pages.textContent = "Pages";
   headerRow.appendChild(pages);
 
   const readStatus = document.createElement("th");
-  readStatus.textContent = "read status";
+  readStatus.setAttribute("scope", "col");
+  readStatus.textContent = "Read status";
   headerRow.appendChild(readStatus);
+
+  const deleteBook = document.createElement("th");
+  deleteBook.setAttribute("scope", "col");
+  deleteBook.textContent = "Delete book";
+  headerRow.appendChild(deleteBook);
 
   return table;
 }
 
+// Removes the book from the library
+function removeBook(deleteBtn, row) {
+  // mark the array to be removed.
+  const index = +deleteBtn.getAttribute("data");
+
+  // console.log(index);
+
+  myLibrary.bookContent.splice(index, 1);
+  myLibrary.displayed = index;
+
+  myLibrary.myTable.removeChild(row);
+
+  // displayBook((myLibrary));
+}
+
+// Toggles the status of the reading button
+function toggleStatus(statusBtn) {
+  if (statusBtn.classList.contains("not-read")) {
+    statusBtn.classList.remove("not-read")
+    statusBtn.classList.add("read");
+    statusBtn.textContent = "read";
+  } else {
+    statusBtn.classList.remove("read");
+    statusBtn.classList.add("not-read");
+    statusBtn.textContent = "not read";
+  }
+}
+ 
 // Displays book using html table element
 function displayBook(library) {
   for (let i = library.displayed; i < library.bookContent.length; i++) {
     const book = library.bookContent[i];
+    if (book.displayed) {
+      library.displayed = library.displayed + 1;
+      continue;
+    }
 
     console.log(book);
     const row = document.createElement("tr");
-    library.table.appendChild(row);
+    library.myTable.appendChild(row);
 
     const title = document.createElement("td");
     title.textContent = book.title;
@@ -85,10 +133,35 @@ function displayBook(library) {
     row.appendChild(pages);
 
     const readStatus = document.createElement("td");
-    readStatus.textContent = book.readStatus ? "read" : "not read";
+    const statusBtn = document.createElement("button");
+    const statusTxt = book.read ? "read" : "not-read";
+    statusBtn.textContent = book.read ? "read" : "not read";
+
+    statusBtn.classList.add("status", statusTxt);
+    readStatus.appendChild(statusBtn);
+
+    statusBtn.addEventListener('click', function() {
+      toggleStatus(statusBtn);
+    });
+
     row.appendChild(readStatus);
 
+    const deleteStatus = document.createElement("td");
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "delete";
+    deleteBtn.setAttribute("data", ""+i);
+    deleteBtn.setAttribute("class", "delete");
+
+    deleteStatus.appendChild(deleteBtn);
+
+    deleteBtn.addEventListener('click', function() {
+      removeBook(deleteBtn, row);
+    });
+
+    row.appendChild(deleteStatus);
+    
     library.displayed = library.displayed + 1;
+    book.displayed = true;
   }
 }
 
@@ -99,16 +172,15 @@ const crimeAndPunishment = new Book(
   false
 );
 
-const theIdiot = new Book("theIdiot", "F, Dostoyevsky", 718, false);
+const theIdiot = new Book("theIdiot", "F, Dostoyevsky", 718, true);
 
 let myLibrary = new library();
 const table = initDisplay();
-myLibrary.table = table;
+myLibrary.myTable = table;
 
 // Can be uncommented to see default behaviour
-// myLibrary.bookContent.push(theHobbit);
-// myLibrary.bookContent.push(crimeAndPunishment);
-// myLibrary.bookContent.push(theIdiot);
+myLibrary.bookContent.push(crimeAndPunishment);
+myLibrary.bookContent.push(theIdiot);
 
 displayBook(myLibrary);
 
@@ -120,6 +192,8 @@ myInputs.inputContainer = inputContainer;
 function createInputRow(labels, placeholder) {
   const row = document.createElement("div");
   const title = document.createElement("label");
+
+  row.setAttribute("class", "form-group"); // bootstrap class
 
   title.setAttribute("for", labels);
   title.textContent = labels.charAt(0).toUpperCase() + labels.slice(1) + ":";
@@ -145,12 +219,13 @@ function addNewBook() {
   const form = document.createElement("form");
 
   form.setAttribute("class", "form");
-  form.setAttribute('method', 'post');
+  form.setAttribute("method", "post");
   myInputs.inputForm = form;
   myInputs.inputContainer.append(form);
 
   const submitBtn = document.createElement("button");
-  submitBtn.setAttribute("class", "submit");
+  submitBtn.setAttribute("type", "submit");
+  submitBtn.setAttribute("class", "btn btn-primary");
   submitBtn.textContent = "submit";
   submitBtn.addEventListener("click", addBook, false);
 
@@ -192,6 +267,6 @@ function addBook(event) {
 
   myInputs.inputContainer.removeChild(myInputs.inputForm);
   displayBook(myLibrary);
-  myInputs.newBtn.classList.add('not-active');
-  event.preventDefault(); 
+  myInputs.newBtn.classList.add("not-active");
+  event.preventDefault();
 }

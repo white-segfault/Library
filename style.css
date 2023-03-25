@@ -1,0 +1,54 @@
+body {
+  padding: 20px;
+}
+
+body button.new {
+  margin-bottom: 10px;
+}
+
+body .container {
+  margin-left: inherit;
+  margin-right: inherit;
+  max-width: inherit;
+  width: inherit;
+  padding: inherit;
+  box-sizing: inherit;
+}
+
+table.table {
+  width: inherit;
+  margin-left: 10px;
+}
+
+table > caption {
+  padding: 0;
+  color: #234868;
+  text-align: center;
+  caption-side: top;
+  margin-bottom: 10px;
+}
+button.status.read {
+  background-color: #baffba;
+  color: #45b358;
+  border-radius: 10px;
+}
+
+button.delete {
+  background-color: #d2e9ff;
+  border-style: dashed;
+  color: #6ac5cf;
+}
+
+button.status.not-read {
+  background-color: #ffb4b4;
+  border-radius: 10px;
+  color: #702020;
+}
+ 
+th, td {
+  padding: 10px;
+}
+
+form > div {
+  margin: 10px;
+}
